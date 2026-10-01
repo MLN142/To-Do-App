@@ -10,6 +10,7 @@ key=os.getenv("SUPABASE_KEY")
 
 supabase: Client=create_client(url,key)
 
+
 def get_todos():
   response=supabase.table("todos").select("*").execute()
   return response.data
@@ -17,19 +18,21 @@ def get_todos():
 def add_todos(task):
   supabase.table("todos").insert({'task':task}).execute()
 
-def remove_task(task):
-  return None
+def remove_todos(id):
+  supabase.table("todos").delete().eq("id", id).execute()
+
 
 st.title("TO-DO APP")
+task=st.text_input("Enter the task to be addded",placeholder="Type Here",key="task_input")
 
-task=st.text_input("Enter the task to be addded")
 
-cols=st.columns(2)
 tb=st.button("Add Task")
 if tb:
   if task:
     add_todos(task)
     st.success("Successfully added task!")
+
+    
   else:
     st.error("Please enter a task!")
 
@@ -37,7 +40,14 @@ if tb:
 st.write("### To-Do List:")
 todos=get_todos()
 if todos:
-  for todo in todos:
-    st.write(f"{todo["task"]}")
+    for todo in todos:
+        col1, col2 = st.columns([8, 2])
+        col1.write(todo["task"])
+        col2.button(
+            "Remove Task",
+            key=f"{todo['id']}",
+            on_click=remove_todos,
+            args=(todo["id"],),
+        )
 else:
-  st.write("No task available!")
+    st.write("No task available!")
