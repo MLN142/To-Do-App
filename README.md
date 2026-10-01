@@ -1,1 +1,1 @@
-To-Do application created using python streamlit and subabase
+To-Do application created using python streamlit and supabase
